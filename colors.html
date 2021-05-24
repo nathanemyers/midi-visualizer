@@ -1,0 +1,57 @@
+<script src="/socket.io/socket.io.js"></script>
+
+<style>
+  body {
+    margin: 0;
+  }
+</style>
+
+<video width="100%" loop="true" autoplay="autoplay" muted>
+  <source src="/videos/video2.mp4" type="video/webm">
+  Sorry, your browser doesn't support embedded videos.
+</video>
+
+<script>
+  var socket = io();
+
+  var messages = document.getElementById('messages');
+  var body = document.body
+
+
+  fetch('http://localhost:3000/video-list')
+    .then(response => response.json())
+    .then(data => console.log(data));
+
+  function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+  }
+
+  let prevColor = null
+  let newColor = null
+  function setRandomBackground() {
+    const colors = [
+      'red',
+      'blue',
+      'green',
+      'purple',
+      'yellow',
+      'orange',
+      'rebeccapurple',
+      'tomato',
+      '#bada55',
+      'rgb(150,255,0)',
+    ]
+    while (prevColor === newColor) {
+      newColor = colors[getRandomInt(colors.length - 1)]
+    }
+    prevColor = newColor
+    document.body.bgColor = newColor
+  }
+
+  socket.on('note', function (msg) {
+    console.log('recv msg', msg)
+    if (msg.keydown) {
+      setRandomBackground()
+    }
+  });
+</script>
