@@ -17,11 +17,12 @@
   var messages = document.getElementById('messages');
   var body = document.body
 
-
   let videos = []
   fetch('http://localhost:3000/video-list')
     .then(response => response.json())
-    .then(data => console.log(data));
+    .then((data) => {
+      videos = data.videos
+    });
 
   function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -31,7 +32,7 @@
   let newVideo = null
   function setRandomVideo() {
     while (prevVideo === newVideo) {
-      newVideo = colors[getRandomInt(colors.length - 1)]
+      newVideo = videos[getRandomInt(videos.length - 1)]
     }
     prevVideo = newVideo
     document.body.bgColor = newVideo

@@ -21,9 +21,12 @@ app.get('/video-display', (req, res) => {
 });
 
 app.get('/video-list', (req, res) => {
+    const videoRegex = new RegExp('.*\.mp4$');
     const files = []
     fs.readdirSync('./videos/').forEach(file => {
-        files.push(file)
+        if(videoRegex.test(file)) {
+            files.push(file)
+        }
     });
     res.json({
         videos: files
@@ -40,45 +43,45 @@ server.listen(3000, () => {
 
 // MIDI CONTROLLER
 try {
-const input = new midi.Input();
+    const input = new midi.Input();
 
-input.getPortCount();
-input.getPortName(0);
+    input.getPortCount();
+    input.getPortName(0);
 
-input.on('message', (deltaTime, message) => {
-    // The message is an array of numbers corresponding to the MIDI bytes:
-    //   [status, data1, data2]
-    // https://www.cs.cf.ac.uk/Dave/Multimedia/node158.html has some helpful
-    // information interpreting the messages.
-    console.log(`m: ${message} d: ${deltaTime}`);
-    const [first, key, third] = message
-    io.emit('note', {
-        keydown: first === 144,
-        key,
-    })
-});
+    input.on('message', (deltaTime, message) => {
+        // The message is an array of numbers corresponding to the MIDI bytes:
+        //   [status, data1, data2]
+        // https://www.cs.cf.ac.uk/Dave/Multimedia/node158.html has some helpful
+        // information interpreting the messages.
+        console.log(`m: ${message} d: ${deltaTime}`);
+        const [first, key, third] = message
+        io.emit('note', {
+            keydown: first === 144,
+            key,
+        })
+    });
 
-// Open the first available input port.
-input.openPort(0);
+    // Open the first available input port.
+    input.openPort(0);
 
-// Sysex, timing, and active sensing messages are ignored
-// by default. To enable these message types, pass false for
-// the appropriate type in the function below.
-// Order: (Sysex, Timing, Active Sensing)
-// For example if you want to receive only MIDI Clock beats
-// you should use
-// input.ignoreTypes(true, false, true)
-input.ignoreTypes(false, false, false);
+    // Sysex, timing, and active sensing messages are ignored
+    // by default. To enable these message types, pass false for
+    // the appropriate type in the function below.
+    // Order: (Sysex, Timing, Active Sensing)
+    // For example if you want to receive only MIDI Clock beats
+    // you should use
+    // input.ignoreTypes(true, false, true)
+    input.ignoreTypes(false, false, false);
 
-// ... receive MIDI messages ...
+    // ... receive MIDI messages ...
 
-// Close the port when done.
-// const timeoutSeconds = 120
-// setTimeout(function() {
-//   console.log(`closing midi bridge, no activity for ${timeoutSeconds} seconds`)
-//   input.closePort();
-// }, timeoutSeconds * 1000);
-} catch(e) {
+    // Close the port when done.
+    // const timeoutSeconds = 120
+    // setTimeout(function() {
+    //   console.log(`closing midi bridge, no activity for ${timeoutSeconds} seconds`)
+    //   input.closePort();
+    // }, timeoutSeconds * 1000);
+} catch (e) {
     console.log(`Unable to find midi input, skipping midi controls`)
     console.log(`To enable midi, plug in a midi source and restart server`)
     console.log(` --- `)
