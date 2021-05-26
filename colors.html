@@ -6,21 +6,11 @@
   }
 </style>
 
-<video width="100%" loop="true" autoplay="autoplay" muted>
-  <source src="/videos/video2.mp4" type="video/webm">
-  Sorry, your browser doesn't support embedded videos.
-</video>
-
 <script>
   var socket = io();
 
   var messages = document.getElementById('messages');
   var body = document.body
-
-
-  fetch('http://localhost:3000/video-list')
-    .then(response => response.json())
-    .then(data => console.log(data));
 
   function getRandomInt(max) {
     return Math.floor(Math.random() * max);

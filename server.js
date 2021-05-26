@@ -17,7 +17,7 @@ app.get('/color-display', (req, res) => {
 });
 
 app.get('/video-display', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/videos.html');
 });
 
 app.get('/video-list', (req, res) => {
@@ -38,7 +38,8 @@ server.listen(3000, () => {
     console.log('listening on *:3000');
 });
 
-// Set up a new input.
+// MIDI CONTROLLER
+try {
 const input = new midi.Input();
 
 input.getPortCount();
@@ -77,3 +78,8 @@ input.ignoreTypes(false, false, false);
 //   console.log(`closing midi bridge, no activity for ${timeoutSeconds} seconds`)
 //   input.closePort();
 // }, timeoutSeconds * 1000);
+} catch(e) {
+    console.log(`Unable to find midi input, skipping midi controls`)
+    console.log(`To enable midi, plug in a midi source and restart server`)
+    console.log(` --- `)
+}

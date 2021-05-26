@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js"
+    "colors": "node server.js && open http://localhost:3000/color-display",
+    "videos": "node server.js && open http://localhost:3000/video-display"
   },
   "author": "",
   "license": "ISC",

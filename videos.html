@@ -18,6 +18,7 @@
   var body = document.body
 
 
+  let videos = []
   fetch('http://localhost:3000/video-list')
     .then(response => response.json())
     .then(data => console.log(data));
@@ -26,26 +27,14 @@
     return Math.floor(Math.random() * max);
   }
 
-  let prevColor = null
-  let newColor = null
-  function setRandomBackground() {
-    const colors = [
-      'red',
-      'blue',
-      'green',
-      'purple',
-      'yellow',
-      'orange',
-      'rebeccapurple',
-      'tomato',
-      '#bada55',
-      'rgb(150,255,0)',
-    ]
-    while (prevColor === newColor) {
-      newColor = colors[getRandomInt(colors.length - 1)]
+  let prevVideo = null
+  let newVideo = null
+  function setRandomVideo() {
+    while (prevVideo === newVideo) {
+      newVideo = colors[getRandomInt(colors.length - 1)]
     }
-    prevColor = newColor
-    document.body.bgColor = newColor
+    prevVideo = newVideo
+    document.body.bgColor = newVideo
   }
 
   socket.on('note', function (msg) {
