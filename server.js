@@ -10,7 +10,8 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(cors())
-app.use('/videos', express.static('videos'))
+const STATIC_VIDEO_PATH = '/videos'
+app.use(STATIC_VIDEO_PATH, express.static('videos'))
 
 app.get('/color-display', (req, res) => {
     res.sendFile(__dirname + '/colors.html');
@@ -25,7 +26,7 @@ app.get('/video-list', (req, res) => {
     const files = []
     fs.readdirSync('./videos/').forEach(file => {
         if(videoRegex.test(file)) {
-            files.push(file)
+            files.push(`${STATIC_VIDEO_PATH}/${file}`)
         }
     });
     res.json({

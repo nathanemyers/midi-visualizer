@@ -6,42 +6,72 @@
   }
 </style>
 
-<video width="100%" loop="true" autoplay="autoplay" muted>
+<!-- <video width="100%" loop="true" autoplay="autoplay" muted>
   <source src="/videos/video2.mp4" type="video/webm">
   Sorry, your browser doesn't support embedded videos.
-</video>
+</video> -->
 
 <script>
   var socket = io();
 
-  var messages = document.getElementById('messages');
-  var body = document.body
+  function addVideo(videoPath, id) {
+    const videoFrame = document.createElement("video");
+    videoFrame.setAttribute('width', '100%')
+    videoFrame.muted = true;
+    videoFrame.autoplay = true;
+    videoFrame.loop = true;
+    videoFrame.setAttribute('playsinline', true);
+    videoFrame.style.display = 'none'
+    videoFrame.id = id
 
-  let videos = []
+    const source = document.createElement("source")
+    source.setAttribute('src', videoPath)
+    source.setAttribute('type', 'video/webm')
+
+    videoFrame.appendChild(source)
+    document.body.appendChild(videoFrame)
+  }
+
+
+  let videoData = []
+  let prevVideoId = null
+  let newVideoId = null
+
   fetch('http://localhost:3000/video-list')
     .then(response => response.json())
     .then((data) => {
-      videos = data.videos
+      videoData = data.videos.map((video, i) => ({
+        id: `video-${i}`,
+        filepath: video,
+      }))
+
+      // insert all videos
+      videoData.forEach(({filepath, id}) => addVideo(filepath, id))
+
+      // prime the first video
+      prevVideoId = videoData[0].id
     });
 
   function getRandomInt(max) {
     return Math.floor(Math.random() * max);
   }
 
-  let prevVideo = null
-  let newVideo = null
   function setRandomVideo() {
-    while (prevVideo === newVideo) {
-      newVideo = videos[getRandomInt(videos.length - 1)]
+    while (prevVideoId === newVideoId) {
+      newVideoId = videoData[getRandomInt(videoData.length - 1)].id
     }
-    prevVideo = newVideo
-    document.body.bgColor = newVideo
+
+    const oldVideo = document.getElementById(prevVideoId)
+    prevVideoId = newVideoId
+    const newVideo = document.getElementById(newVideoId)
+    oldVideo.style.display = 'none'
+    newVideo.style.display = 'block'
   }
 
   socket.on('note', function (msg) {
     console.log('recv msg', msg)
     if (msg.keydown) {
-      setRandomBackground()
+      setRandomVideo()
     }
   });
 </script>
